@@ -17,7 +17,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          
+
+      - run: ls -l          
       - run: npm ci
+      - run: ls -l
       - run: npm run test
       - run: npm run build
+      - run: ls -l
