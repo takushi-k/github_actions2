@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'backend/**'
+      - '.github/**'      
   schedule:
     - cron: '00 12 * * *'
     
