@@ -52,15 +52,19 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - run: rsync -v -e 'ssh -i ../../udemy-github-actions-key.pem' dist/index.js ${SERVER_USER}@${SERVER_IP}:~/index.js
+      - uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.BACKEND_SERVER_SSH_KEY }}
+          known_hosts: ${{ secrets.BACKEND_SERVER_KNOWN_HOSTS }}    
+      - run: rsync -v dist/index.js ${SERVER_USER}@${SERVER_IP}:~/index.js
         env:
           SERVER_USER: ${{ secrets.BACKEND_SERVER_USER }}
           SERVER_IP: ${{ secrets.BACKEND_SERVER_IP }}
-      - run: ssh -i ../../udemy-github-actions-key.pem ${SERVER_USER}@${SERVER_IP} sudo systemctl restart backend
+      - run: ssh ${SERVER_USER}@${SERVER_IP} sudo systemctl restart backend
         env:
           SERVER_USER: ${{ secrets.BACKEND_SERVER_USER }}
           SERVER_IP: ${{ secrets.BACKEND_SERVER_IP }}
-      - run: ssh -i ../../udemy-github-actions-key.pem ${SERVER_USER}@${SERVER_IP} systemctl status backend
+      - run: ssh ${SERVER_USER}@${SERVER_IP} systemctl status backend
         env:
           SERVER_USER: ${{ secrets.BACKEND_SERVER_USER }}
           SERVER_IP: ${{ secrets.BACKEND_SERVER_IP }}
