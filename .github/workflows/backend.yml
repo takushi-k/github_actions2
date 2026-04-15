@@ -7,8 +7,8 @@ on:
 #     paths:
 #       - 'backend/**'
 #       - '.github/**'      
-  schedule:
-    - cron: '0 12 * * *'
+  # schedule:
+  #   - cron: '0 12 * * *'
 
 defaults:
   run:
@@ -47,11 +47,23 @@ jobs:
           path: backend/dist/index.js
           retention-days: 5          
 
-#   deploy:
-#     needs: build
-#     if: github.event_name == 'push'
-#     runs-on: ubuntu-latest
-#     steps:
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - run: rsync -v -e 'ssh -i ../../udemy-github-actions-key.pem' dist/index.js ${SERVER_USER}@${SERVER_IP}:~/index.js
+        env:
+          SERVER_USER: ${{ secrets.BACKEND_SERVER_USER }}
+          SERVER_IP: ${{ secrets.BACKEND_SERVER_IP }}
+      - run: ssh -i ../../udemy-github-actions-key.pem ${SERVER_USER}@${SERVER_IP} sudo systemctl restart backend
+        env:
+          SERVER_USER: ${{ secrets.BACKEND_SERVER_USER }}
+          SERVER_IP: ${{ secrets.BACKEND_SERVER_IP }}
+      - run: ssh -i ../../udemy-github-actions-key.pem ${SERVER_USER}@${SERVER_IP} systemctl status backend
+        env:
+          SERVER_USER: ${{ secrets.BACKEND_SERVER_USER }}
+          SERVER_IP: ${{ secrets.BACKEND_SERVER_IP }}
 #       - uses: actions/download-artifact@v3
 #         with:
 #           name: dist
