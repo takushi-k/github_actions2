@@ -21,9 +21,9 @@ jobs:
       - run: npm ci
       - run: ls -la
       - run: npm run test -- --coverage
-      - run: ls -la backend
+      - run: ls -la
       - run: npm run build
-      - run: ls -la backend
+      - run: ls -la
       - uses: actions/upload-artifact@v4
         with:
           name: coverage
